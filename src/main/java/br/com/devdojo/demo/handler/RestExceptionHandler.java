@@ -36,13 +36,8 @@ public class RestExceptionHandler {
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 
-        String fields = fieldErrors.stream()
-                .map(FieldError::getField)
-                .collect(Collectors.joining(","));
-
-        String fieldMessages = fieldErrors.stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining(","));
+        String fields = getFields(fieldErrors);
+        String fieldMessages = getFieldMessages(fieldErrors);
 
         ValidationErrorDatails details = ValidationErrorDatails.Builder
                 .newBuilder()
@@ -56,6 +51,18 @@ public class RestExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
+    }
+
+    private String getFieldMessages(List<FieldError> fieldErrors) {
+        return fieldErrors.stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(","));
+    }
+
+    private String getFields(List<FieldError> fieldErrors) {
+        return fieldErrors.stream()
+                .map(FieldError::getField)
+                .collect(Collectors.joining(","));
     }
 
 }
